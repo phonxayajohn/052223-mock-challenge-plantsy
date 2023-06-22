@@ -10,28 +10,39 @@ function App() {
   useEffect(() =>
     fetch(API)
     .then(res => res.json())
-    .then(setPlants), []
-    )
+    .then(setPlants), [])
   
-  const addPlant = (newPlant) => {
+  function addNewPlant(plant) {
     fetch(API, {
       headers: {
         "Content-Type": "application/json",
-        Accept: "application/json"
+        Accepts: "application/json"
       },
       method: "POST",
-      body: JSON.stringify(newPlant),
+      body: JSON.stringify(plant),
     })
       .then(res => res.json())
-      .then(setPlants([...plants]))
+      .then(json => setPlants([...plants, json])) // then takes the returned json and use that data in setPlants along with the '...plants' spread
   }
 
   return (
     <div className="app">
       <Header />
-      <PlantPage plants={plants} addPlant={addPlant} />
+      <PlantPage 
+        plants={plants} 
+        addNewPlant={addNewPlant} 
+        plantStock={plantStock} 
+      />
     </div>
   );
+
+  // if the p's id does not match plant.id then return p, otherwise return copy of p and assign outStock to true
+  function plantStock(plant) {
+    setPlants(plants.map(p => p.id !== plant.id
+      ? p
+      : {...p, outStock: true}
+      ))
+  }
 }
 
 export default App;
